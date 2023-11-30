@@ -14,15 +14,11 @@ def findTrainsPassenger(fname, lname):
     cursor.execute(query, (fname, lname))
     results = cursor.fetchall()
     return results        
-# fname = input("Enter first name: ")
-# lname = input("Enter last name: ")
-# findTrainsPassenger(fname, lname)
-
 
 
 def passengers_from_date(tdate):
     query = """
-        SELECT Passenger.first_name, Passenger.last_name
+        SELECT Passenger.first_name, Passenger.last_name, Passenger.address
         FROM Passenger
         JOIN Booked ON Passenger.SSN = Booked.Passanger_ssn
         JOIN train ON Booked.Train_Number = train.Train_Number
@@ -32,12 +28,8 @@ def passengers_from_date(tdate):
     cursor.execute(query, (tdate,))
     results = cursor.fetchall()
 
-    for row in results:
-        print(row)
+    return results
     
-# date = input("Enter date: (DD-MM-YYYY): ")
-# passengers_from_date(date)
-
 
 
 def passengers_age(start_age, end_age):
@@ -52,8 +44,7 @@ def passengers_age(start_age, end_age):
     
     results = cursor.fetchall()
 
-    for row in results:
-        print(row)
+    return results
 
 # sage  = input("Start age: ")
 # eage = input("End age: ")
@@ -74,7 +65,7 @@ def passengers_age(start_age, end_age):
     
 def passengers_from_train(tname):
     query = """
-    Select passenger.first_name, passenger.last_name
+    Select passenger.first_name, passenger.last_name, passenger.address, train.train_name, booked.status
     from passenger
     join Booked on Passenger.ssn = Booked.passanger_ssn
     JOIN train on Booked.train_number = train.train_number
@@ -83,19 +74,24 @@ def passengers_from_train(tname):
     cursor.execute(query, (tname,))
     results = cursor.fetchall()
 
-    for row in results:
-        print(row)
+    return results
         
 # tname = input("Train name: ")
 # passengers_from_train(tname)
 
-def delete_record(passenger_ssn, train_number, ttype, status):
+def delete_record(passenger_ssn, train_number):
+    q1 = """
+    select status, Ticket_type from booked
+    where Booked.passanger_ssn = ? and Booked.train_number = ?"""
+    res = cursor.execute(q1,(passenger_ssn, train_number)).fetchone()
+    status = res[0]
+    ttype = res[1]
     query = """
         delete from Booked
-        where Booked.passanger_ssn = ? and Booked.train_number = ? and Booked.status = ?
+        where Booked.passanger_ssn = ? and Booked.train_number = ?
     """
     
-    cursor.execute(query, (passenger_ssn, train_number, status))
+    cursor.execute(query, (passenger_ssn, train_number))
     if (status == 'Booked'):
         query = """
         Select passanger_ssn 
@@ -113,7 +109,7 @@ def delete_record(passenger_ssn, train_number, ttype, status):
         """
         
         cursor.execute(query,(train_number, res))
-        connec.commit()
+    connec.commit()
         
 # ssn = input("input ssn: ")
 # tnum = input("input ssn: ")
