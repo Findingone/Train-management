@@ -52,14 +52,16 @@ def passengers_age(start_age, end_age):
 
 
 
-# def count_passengers():
-#     query = """
-#     """
-#     cursor.execute(query)
-#     results = cursor.fetchall()
+def count_passengers():
+    query = """
+    select date, train_name, premium_seats_booked + general_seats_booked
+    from status
+    """
+    cursor.execute(query)
+    results = cursor.fetchall()
 
-#     for row in results:
-#         print(row)
+    return results
+
 
     
     

@@ -14,7 +14,7 @@ class FeetToMeters:
         ttk.Button(self.mainframe, text="Train finder", command=self.train_finder).grid(row=0, column=0, sticky=(N,S,W,E))
         ttk.Button(self.mainframe, text="Passenger list (date)", command=self.passengerList_date).grid(row=0, column=1, sticky=(N,S,W,E))
         ttk.Button(self.mainframe, text="Age passenger tracker", command=self.AgeTracker).grid(row=0, column=2, sticky=(N,S,W,E))
-        ttk.Button(self.mainframe, text="Passenger count", command=self.createDb).grid(row=0, column=3, sticky=(N,S,W,E))
+        ttk.Button(self.mainframe, text="Passenger count", command=self.PassengerCount).grid(row=0, column=3, sticky=(N,S,W,E))
         ttk.Button(self.mainframe, text="Passenger list (train)", command=self.passengerList_train).grid(row=0, column=4, sticky=(N,S,W,E))
         ttk.Button(self.mainframe, text="Cancel ticket", command=self.cancelTicket).grid(row=0, column=5, sticky=(N,S,W,E))
         ttk.Button(self.mainframe, text="Create sample Db", command=self.createDb).grid(row=0, column=7, sticky=(N,S,W,E))
@@ -175,6 +175,27 @@ class FeetToMeters:
     def cancelTicket_query(self, *args):
         data = qu.delete_record(int(self.pass_ssn.get()), int(self.train_num.get()))
         
+    def PassengerCount(self):
+        self.secondFrame.destroy()
+        self.secondFrame = ttk.Frame(self.mainframe)
+        self.secondFrame.grid(row=2, column=0, columnspan=8)
+
+        data = qu.count_passengers()
+        columns = ("Date", "Train", "Passengers travelling")
+        self.tree = ttk.Treeview(self.secondFrame, columns=columns, show="headings")
+
+        # Set column headings
+        for col in columns:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=100)
+
+        self.tree.grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky=(N,S,W,E))
+
+        for row in data:
+            self.tree.insert("", "end", values=row)
+        root.bind("<Return>", self.cancelTicket_query)
+
+
 
 root = Tk()
 FeetToMeters(root)
